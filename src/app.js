@@ -20,6 +20,14 @@ app.get("/", (req, res) => {
   res.send("hello world!");
 });
 
+app.use((err, req, res, next) => {
+  if (err && err.errorCode) {
+    res.status(err.errorCode).json({ error: err.message });
+  } else if (err) {
+    res.status(500).json(err.message);
+  }
+});
+
 const port = config.port || 5000;
 
 app.listen(port, () => {

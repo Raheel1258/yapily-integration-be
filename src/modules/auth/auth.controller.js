@@ -15,16 +15,16 @@ router.post("/users", async (req, res, next) => {
 
 router.post("/login", async (req, res, next) => {
   try {
-    const user = loginUser(req.body.email, req.body.password);
+    const user = await loginUser(req.body.email, req.body.password);
     res.status(200).json(user);
   } catch (err) {
     next(err);
   }
 });
 
-router.get("/users/:id", (req, res, next) => {
+router.get("/users/:id", async (req, res, next) => {
   try {
-    const user = getCurrentUser(req.params.id);
+    const user = await getCurrentUser(req.params.id);
     res.status(200).json(user);
   } catch (err) {
     next(err);
