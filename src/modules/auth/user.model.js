@@ -10,7 +10,20 @@ const userSchema = new Schema({
     type: String,
     required: true,
   },
+  uuid: {
+    type: String,
+  },
+  applicationUuid: {
+    type: String,
+  },
+  referenceId: {
+    type: String,
+  },
+  institutionConsents: {
+    type: [String],
+  },
 });
 
 const User = model("User", userSchema);
+
 export { User };

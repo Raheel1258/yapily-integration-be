@@ -1,3 +1,4 @@
+import config from "../../config/config.js";
 import HTTPException from "../../models/http-exception-model.js";
 import { generateToken } from "./token.utils.js";
 import { User } from "./user.model.js";
@@ -21,14 +22,39 @@ const createUser = async (email, password) => {
 
   await checkUserUniqueness(email);
 
+  const response = await fetch(`https://api.yapily.com/users`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json;charset=UTF-8",
+      Authorization: `Basic ${Buffer.from(
+        `${config.applicationId}:${config.applicationSecret}`
+      ).toString("base64")}`,
+    },
+    body: JSON.stringify({}),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new HTTPException(data.error?.code ?? 500, data.error.message);
+  }
+
   const hashedPassword = await bcrypt.hash(password, 10);
   const user = await new User({
     email,
     password: hashedPassword,
+    uuid: data.uuid,
+    applicationUuid: data.applicationUuid,
+    referenceId: data.referenceId,
+    institutionConsents: data.institutionConsents,
   }).save();
 
   return {
     id: user._id,
+    uuid: user.uuid,
+    applicationUuid: user.applicationUuid,
+    referenceId: user.referenceId,
+    institutionConsents: user.institutionConsents,
     accessToken: generateToken(user._id),
   };
 };
@@ -53,6 +79,10 @@ const loginUser = async (email, password) => {
       return {
         email: user.email,
         id: user._id,
+        uuid: user.uuid,
+        applicationUuid: user.applicationUuid,
+        referenceId: user.referenceId,
+        institutionConsents: user.institutionConsents,
         accessToken: generateToken(user._id),
       };
     }
@@ -66,6 +96,10 @@ const getCurrentUser = async (id) => {
   if (user) {
     return {
       email: user.email,
+      uuid: user.uuid,
+      applicationUuid: user.applicationUuid,
+      referenceId: user.referenceId,
+      institutionConsents: user.institutionConsents,
       id: user._id,
     };
   }
