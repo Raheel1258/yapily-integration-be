@@ -1,4 +1,5 @@
 import config from "../../config/config.js";
+import * as api from "../../api/api.js";
 import HTTPException from "../../models/http-exception-model.js";
 import { generateToken } from "./token.utils.js";
 import { User } from "./user.model.js";
@@ -22,22 +23,7 @@ const createUser = async (email, password) => {
 
   await checkUserUniqueness(email);
 
-  const response = await fetch(`https://api.yapily.com/users`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json;charset=UTF-8",
-      Authorization: `Basic ${Buffer.from(
-        `${config.applicationId}:${config.applicationSecret}`
-      ).toString("base64")}`,
-    },
-    body: JSON.stringify({}),
-  });
-
-  const data = await response.json();
-
-  if (!response.ok) {
-    throw new HTTPException(data.error?.code ?? 500, data.error.message);
-  }
+  const data = await api.GET(`${config.yapilyApiUrl}/users`);
 
   const hashedPassword = await bcrypt.hash(password, 10);
   const user = await new User({
@@ -107,4 +93,27 @@ const getCurrentUser = async (id) => {
   throw new HTTPException(404, "Invalid user id");
 };
 
-export { createUser, loginUser, getCurrentUser };
+const createAccountAuthorization = async (institutionId, userUuid) => {
+  if (!institutionId) {
+    throw new HTTPException(422, "InstitutionId is required");
+  }
+
+  if (!userUuid) {
+    throw new HTTPException(422, "User UUID is required");
+  }
+  const body = {
+    institutionId,
+    userUuid,
+    redirect: {
+      ur: "http://localhost:5000",
+    },
+  };
+  const auth = await api.POST(
+    `${config.yapilyApiUrl}/account-auth-requests`,
+    body
+  );
+  console.log(auth);
+  return auth;
+};
+
+export { createUser, loginUser, getCurrentUser, createAccountAuthorization };
