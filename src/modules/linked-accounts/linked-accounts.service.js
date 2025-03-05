@@ -1,4 +1,3 @@
-import { User } from "../auth/user.model.js";
 import { LinkedAccount } from "./linked-accounts.model.js";
 
 const getAllLinkedAccounts = async (id) => {
