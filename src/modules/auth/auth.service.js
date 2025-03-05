@@ -23,7 +23,7 @@ const createUser = async (email, password) => {
 
   await checkUserUniqueness(email);
 
-  const data = await api.GET(`${config.yapilyApiUrl}/users`);
+  const data = await api.POST(`${config.yapilyApiUrl}/users`);
 
   const hashedPassword = await bcrypt.hash(password, 10);
   const user = await new User({
@@ -93,17 +93,19 @@ const getCurrentUser = async (id) => {
   throw new HTTPException(404, "Invalid user id");
 };
 
-const createAccountAuthorization = async (institutionId, userUuid, callbackUrl) => {
+const createAccountAuthorization = async (
+  institutionId,
+  userId,
+  callbackUrl
+) => {
   if (!institutionId) {
     throw new HTTPException(422, "InstitutionId is required");
   }
 
-  if (!userUuid) {
-    throw new HTTPException(422, "User UUID is required");
-  }
+  const user = await User.findById(userId);
   const body = {
     institutionId,
-    userUuid,
+    userUuid: user.uuid,
     callback: `${callbackUrl}/yapily/auth`,
   };
   const auth = await api.POST(

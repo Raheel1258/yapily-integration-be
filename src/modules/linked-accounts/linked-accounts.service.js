@@ -1,7 +1,8 @@
+import { User } from "../auth/user.model.js";
 import { LinkedAccount } from "./linked-accounts.model.js";
 
-const getAllLinkedAccounts = async () => {
-  const linkedAccounts = await LinkedAccount.find();
+const getAllLinkedAccounts = async (id) => {
+  const linkedAccounts = await LinkedAccount.find({ userId: id });
   return linkedAccounts;
 };
 

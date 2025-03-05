@@ -21,6 +21,7 @@ const LinkedAccountSchema = new Schema({
     required: true,
     unique: true,
   },
+  userId: String,
   type: String,
   balance: Number,
   currency: String,

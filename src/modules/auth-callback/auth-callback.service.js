@@ -3,8 +3,9 @@ import * as api from "../../api/api.js";
 import config from "../../config/config.js";
 import { Transaction } from "../transactions/transactions.model.js";
 import HTTPException from "../../models/http-exception-model.js";
+import { User } from "../auth/user.model.js";
 
-const saveFinancialData = async (consent) => {
+const saveFinancialData = async (userUuid, consent) => {
   if (!consent) {
     throw new HTTPException(400, "Invalid consent header");
   }
@@ -19,14 +20,15 @@ const saveFinancialData = async (consent) => {
   );
   const transactions = await Promise.all(transactionPromises);
   await saveTransactions(linkedAccounts, transactions);
-  await saveLinkedAccounts(linkedAccounts);
+  await saveLinkedAccounts(linkedAccounts, userUuid);
 };
 
-const saveLinkedAccounts = async (accounts) => {
-  const bulkOperations = accounts.map((account, i) => ({
+const saveLinkedAccounts = async (accounts, userUuid) => {
+  const user = await User.findOne({ uuid: userUuid });
+  const bulkOperations = accounts.map((account) => ({
     updateOne: {
       filter: { id: account.id },
-      update: account,
+      update: { ...account, userId: user._id },
       upsert: true,
     },
   }));

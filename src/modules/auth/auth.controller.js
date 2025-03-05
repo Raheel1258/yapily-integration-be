@@ -6,6 +6,7 @@ import {
   loginUser,
 } from "./auth.service.js";
 import config from "../../config/config.js";
+import { auth } from "./auth.js";
 
 const router = Router();
 
@@ -28,21 +29,21 @@ router.post("/login", async (req, res, next) => {
   }
 });
 
-router.get("/users/:id", async (req, res, next) => {
+router.get("/user", auth.required, async (req, res, next) => {
   try {
-    const user = await getCurrentUser(req.params.id);
+    const user = await getCurrentUser(req?.auth?.user?.id);
     res.status(200).json(user);
   } catch (err) {
     next(err);
   }
 });
 
-router.post("/users/authorize", async (req, res, next) => {
+router.post("/user/link-account", auth.required, async (req, res, next) => {
   const callbackUrl = `${req.protocol}://${req.hostname}:${config.port}`;
   try {
     const auth = await createAccountAuthorization(
       req.body.institutionId,
-      req.body.userUuid,
+      req?.auth?.user?.id,
       callbackUrl
     );
     res.status(200).json(auth);

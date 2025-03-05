@@ -21,6 +21,12 @@ app.get("/", (req, res) => {
 });
 
 app.use((err, req, res, next) => {
+  if (err && err.name === "UnauthorizedError") {
+    return res.status(401).json({
+      status: "error",
+      message: "missing authorization headers",
+    });
+  }
   if (err && err.errorCode) {
     res.status(err.errorCode).json({ error: err.message });
   } else if (err) {
