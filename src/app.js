@@ -28,7 +28,7 @@ app.use((err, req, res, next) => {
   }
 });
 
-const port = config.port || 5000;
+const port = config.port;
 
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);

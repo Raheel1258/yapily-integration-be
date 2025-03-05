@@ -1,5 +1,11 @@
 import { Router } from "express";
-import { createAccountAuthorization, createUser, getCurrentUser, loginUser } from "./auth.service.js";
+import {
+  createAccountAuthorization,
+  createUser,
+  getCurrentUser,
+  loginUser,
+} from "./auth.service.js";
+import config from "../../config/config.js";
 
 const router = Router();
 
@@ -32,21 +38,17 @@ router.get("/users/:id", async (req, res, next) => {
 });
 
 router.post("/users/authorize", async (req, res, next) => {
-  console.log('request ', req)
+  const callbackUrl = `${req.protocol}://${req.hostname}:${config.port}`;
   try {
     const auth = await createAccountAuthorization(
       req.body.institutionId,
-      req.body.userUuid
+      req.body.userUuid,
+      callbackUrl
     );
     res.status(200).json(auth);
   } catch (err) {
     next(err);
   }
 });
-
-router.get('/yapily/callback', (req, res, next) => {
-  console.log('callback req ', req.query)
-  console.log('callback body ', req.body)
-})
 
 export default router;

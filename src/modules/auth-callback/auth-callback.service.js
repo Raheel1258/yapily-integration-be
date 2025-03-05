@@ -1,0 +1,3 @@
+const saveAccounts = (userUuid, consent) => {
+    
+}

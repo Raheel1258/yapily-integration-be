@@ -93,7 +93,7 @@ const getCurrentUser = async (id) => {
   throw new HTTPException(404, "Invalid user id");
 };
 
-const createAccountAuthorization = async (institutionId, userUuid) => {
+const createAccountAuthorization = async (institutionId, userUuid, callbackUrl) => {
   if (!institutionId) {
     throw new HTTPException(422, "InstitutionId is required");
   }
@@ -104,15 +104,12 @@ const createAccountAuthorization = async (institutionId, userUuid) => {
   const body = {
     institutionId,
     userUuid,
-    redirect: {
-      ur: "http://localhost:5000",
-    },
+    callback: `${callbackUrl}/yapily/auth`,
   };
   const auth = await api.POST(
     `${config.yapilyApiUrl}/account-auth-requests`,
     body
   );
-  console.log(auth);
   return auth;
 };
 
