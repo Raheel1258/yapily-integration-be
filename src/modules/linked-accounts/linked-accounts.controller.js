@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getAccountById, getAllAccounts } from "./accounts.service.js";
+import { getAccountById, getAllAccounts } from "./linked-accounts.service.js";
 
 const router = Router();
 
