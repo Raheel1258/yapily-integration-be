@@ -1,25 +1,13 @@
-import * as api from "../../api/api.js";
-import config from "../../config/config.js";
-import HTTPException from "../../models/http-exception-model.js";
+import { LinkedAccount } from "./linked-accounts.model.js";
 
-const getAllAccounts = async (consent) => {
-  if (!consent) {
-    throw new HTTPException(400, "Invalid consent header");
-  }
-  const response = await api.GET(`${config.yapilyApiUrl}/accounts`, {
-    consent,
-  });
-  return response;
+const getAllLinkedAccounts = async () => {
+  const linkedAccounts = await LinkedAccount.find();
+  return linkedAccounts;
 };
 
-const getAccountById = async (accountId, consent) => {
-  const response = await api.GET(
-    `${config.yapilyApiUrl}/accounts/${accountId}`,
-    {
-      consent,
-    }
-  );
-  return response;
+const getLinkedAccountById = async (accountId) => {
+  const account = await LinkedAccount.findOne({ id: accountId });
+  return account;
 };
 
-export { getAllAccounts, getAccountById };
+export { getAllLinkedAccounts, getLinkedAccountById };

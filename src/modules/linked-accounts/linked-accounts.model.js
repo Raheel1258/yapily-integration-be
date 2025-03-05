@@ -31,6 +31,6 @@ const LinkedAccountSchema = new Schema({
   accountBalances: [AccountBalanceSchema],
 });
 
-const LinkedAccountModel = model("LinkedAccount", LinkedAccountSchema);
+const LinkedAccount = model("LinkedAccount", LinkedAccountSchema);
 
-export { LinkedAccountModel };
+export { LinkedAccount };

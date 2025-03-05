@@ -1,11 +1,11 @@
 import { Router } from "express";
-import { getAccountById, getAllAccounts } from "./linked-accounts.service.js";
+import { getAllLinkedAccounts, getLinkedAccountById } from "./linked-accounts.service.js";
 
 const router = Router();
 
 router.get("/accounts", async (req, res, next) => {
   try {
-    const accounts = await getAllAccounts(req.headers["consent"]);
+    const accounts = await getAllLinkedAccounts(req.headers["consent"]);
     res.status(200).json(accounts);
   } catch (err) {
     next(err);
@@ -14,7 +14,7 @@ router.get("/accounts", async (req, res, next) => {
 
 router.get("/accounts/:id", async (req, res, next) => {
   try {
-    const accounts = await getAccountById(req.params.id, req.headers["consent"]);
+    const accounts = await getLinkedAccountById(req.params.id, req.headers["consent"]);
     res.status(200).json(accounts);
   } catch (err) {
     next(err);

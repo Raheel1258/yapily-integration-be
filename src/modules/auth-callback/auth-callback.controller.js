@@ -1,12 +1,16 @@
 import { Router } from "express";
+import { saveFinancialData } from "./auth-callback.service.js";
 
 const router = Router();
 
 router.get("/yapily/auth", async (req, res, next) => {
-  const consent = req.query.consent;
-  const userUuid = req.query["user-uuid"];
-  const institution = req.query.institution;
-  res.status(200).json("Consent received");
+  try {
+    await saveFinancialData(req.query.consent);
+    res.status(200).json("Consent received");
+  } catch (err) {
+    console.log(err);
+    next(err);
+  }
 });
 
 export default router;
